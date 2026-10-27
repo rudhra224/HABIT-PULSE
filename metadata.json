@@ -1,0 +1,6 @@
+{
+  "name": "HabitPulse",
+  "description": "Clean, minimalist habit tracker with gamified rewards, deep analytics, streak tracking, and cross-device sync",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

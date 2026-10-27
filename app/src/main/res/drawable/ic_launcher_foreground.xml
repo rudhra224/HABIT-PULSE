@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer progress pulse ring arc -->
+    <path
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M32,54 A22,22 0 1,1 76,54 A22,22 0 0,1 46,74" />
+
+    <!-- Habit checkmark & flame center -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M54,26 C57,33 63,38 63,47 C63,53 58,58 54,60 C50,58 45,53 45,47 C45,40 50,33 54,26 Z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M54,38 C56,42 59,45 59,49 C59,52 56,55 54,56 C52,55 49,52 49,49 C49,45 52,42 54,38 Z" />
+
+    <!-- Bold checkmark accent -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M43,67 L51,75 L67,59" />
+</vector>

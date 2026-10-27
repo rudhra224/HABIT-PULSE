@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp(val) {
+      return val is timestamp && val <= request.time;
+    }
+
+    function isValidUser(data) {
+      return data.userId is string && data.userId == request.auth.uid
+        && data.level is int && data.level >= 1
+        && data.xp is int && data.xp >= 0
+        && data.streakFreezes is int && data.streakFreezes >= 0
+        && data.badges is list && data.badges.size() <= 100
+        && (!('displayName' in data) || data.displayName is string)
+        && (!('email' in data) || data.email is string)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidHabit(data) {
+      return data.id is string && data.id.size() > 0
+        && data.userId is string && data.userId == request.auth.uid
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.category is string && data.category.size() <= 50
+        && data.colorHex is string && data.colorHex.size() <= 20
+        && data.iconName is string && data.iconName.size() <= 50
+        && data.frequency is string && data.frequency.size() <= 30
+        && data.targetDays is list && data.targetDays.size() <= 7
+        && data.targetCount is int && data.targetCount >= 1
+        && data.unit is string && data.unit.size() <= 30
+        && data.currentStreak is int && data.currentStreak >= 0
+        && data.longestStreak is int && data.longestStreak >= 0
+        && data.totalCompletions is int && data.totalCompletions >= 0
+        && (!('reminderTime' in data) || data.reminderTime is string)
+        && (('isArchived' in data && data.isArchived is bool) || ('archived' in data && data.archived is bool) || !('isArchived' in data || 'archived' in data))
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidHabitLog(data) {
+      return data.id is string && data.id.size() > 0
+        && data.userId is string && data.userId == request.auth.uid
+        && data.habitId is string && data.habitId.size() > 0
+        && data.date is string && data.date.size() == 10
+        && data.completed is bool
+        && data.count is int && data.count >= 0
+        && (!('notes' in data) || data.notes is string)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data)
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isOwner(userId);
+
+      match /habits/{habitId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidHabit(request.resource.data);
+        allow update: if isOwner(userId) && isValidHabit(request.resource.data)
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(userId);
+      }
+
+      match /logs/{logId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidHabitLog(request.resource.data);
+        allow update: if isOwner(userId) && isValidHabitLog(request.resource.data)
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

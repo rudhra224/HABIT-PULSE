@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with gamification stats, level, xp, and achievements",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "displayName": { "type": "string", "description": "Display name of user" },
+        "email": { "type": "string", "description": "User email address" },
+        "level": { "type": "integer", "description": "Current gamified level" },
+        "xp": { "type": "integer", "description": "Total earned experience points" },
+        "streakFreezes": { "type": "integer", "description": "Available streak freeze shields" },
+        "badges": { "type": "array", "description": "List of unlocked badge IDs" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update server timestamp" }
+      },
+      "required": ["userId", "level", "xp", "streakFreezes", "badges", "createdAt", "updatedAt"]
+    },
+    "Habit": {
+      "title": "Habit",
+      "description": "User habit tracking definition and streaks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Habit document ID" },
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "title": { "type": "string", "description": "Habit title" },
+        "category": { "type": "string", "description": "Category (Health, Productivity, etc.)" },
+        "colorHex": { "type": "string", "description": "Color hex string for card styling" },
+        "iconName": { "type": "string", "description": "Icon identifier" },
+        "frequency": { "type": "string", "description": "Frequency mode (daily, weekdays, custom)" },
+        "targetDays": { "type": "array", "description": "Days of week (1 to 7)" },
+        "targetCount": { "type": "integer", "description": "Daily target count goal" },
+        "unit": { "type": "string", "description": "Measurement unit (e.g., times, mins, glasses)" },
+        "currentStreak": { "type": "integer", "description": "Current consecutive active streak" },
+        "longestStreak": { "type": "integer", "description": "Longest recorded streak" },
+        "totalCompletions": { "type": "integer", "description": "Total number of times completed" },
+        "reminderTime": { "type": "string", "description": "Reminder time string (HH:MM)" },
+        "isArchived": { "type": "boolean", "description": "Whether habit is archived" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update server timestamp" }
+      },
+      "required": ["id", "userId", "title", "category", "colorHex", "iconName", "frequency", "targetDays", "targetCount", "unit", "currentStreak", "longestStreak", "totalCompletions", "isArchived", "createdAt", "updatedAt"]
+    },
+    "HabitLog": {
+      "title": "HabitLog",
+      "description": "Daily completion record for a habit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Log record ID" },
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "habitId": { "type": "string", "description": "Associated habit ID" },
+        "date": { "type": "string", "description": "Date string YYYY-MM-DD" },
+        "completed": { "type": "boolean", "description": "Whether the habit was completed" },
+        "count": { "type": "integer", "description": "Recorded count progress" },
+        "notes": { "type": "string", "description": "Optional notes or reflection" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Log creation server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Log update server timestamp" }
+      },
+      "required": ["id", "userId", "habitId", "date", "completed", "count", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User document storing gamification progress and stats"
+    },
+    "/users/{userId}/habits/{habitId}": {
+      "schema": "Habit",
+      "description": "Subcollection of habits created and tracked by user"
+    },
+    "/users/{userId}/logs/{logId}": {
+      "schema": "HabitLog",
+      "description": "Subcollection of daily completion logs for habits"
+    }
+  }
+}
